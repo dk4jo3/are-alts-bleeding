@@ -17,15 +17,20 @@ markets_end_point = end_point + \
 api_response = requests.get(markets_end_point)
 api_data = api_response.json()
 
+
+# check if they are not NoneType
 for i in api_data:
 	if i['id'] == 'bitcoin':
 		bitcoin_change['24h'] = float(i['price_change_percentage_24h_in_currency'])
 		bitcoin_change['7d'] = float(i['price_change_percentage_7d_in_currency'])
 		bitcoin_change['30d'] = float(i['price_change_percentage_30d_in_currency'])
 	else: 
-		alt_change['24h'].append(float(i['price_change_percentage_24h_in_currency']))
-		alt_change['7d'].append(float(i['price_change_percentage_7d_in_currency']))
-		alt_change['30d'].append(float(i['price_change_percentage_30d_in_currency']))
+		if i['price_change_percentage_24h_in_currency'] is not None:
+			alt_change['24h'].append(i['price_change_percentage_24h_in_currency'])
+		if i['price_change_percentage_7d_in_currency'] is not None:
+			alt_change['7d'].append(i['price_change_percentage_7d_in_currency'])
+		if i['price_change_percentage_30d_in_currency'] is not None:
+			alt_change['30d'].append(i['price_change_percentage_30d_in_currency'])
 
 # sort lists
 
@@ -50,5 +55,3 @@ print (('24 hour change: BTC: {} %, ALT_MEAN: {} %, ALT_MEDIAN: {} %').format(bi
 print (('07 day change: BTC: {} %, ALT_MEAN: {} %, ALT_MEDIAN: {} %').format(bitcoin_change['7d'], change_stats['7d_mean'], change_stats['7d_median']))
 print (('30 day change: BTC: {} %, ALT_MEAN: {} %, ALT_MEDIAN: {} %').format(bitcoin_change['30d'], change_stats['30d_mean'], change_stats['30d_median']))
 
-
-# result_indication(alt_24h_mean)
