@@ -1,7 +1,7 @@
 body {
     padding-top: 3rem;
     font-family: roboto;
-    background: #091C34;
+    background: #CCCCC;
 }
 
 /* font */
@@ -30,7 +30,7 @@ body {
 .header,
 .divider,
 .footer {
-    color: #FFF;
+    color: #000;
 }
 
 .footer {
@@ -48,7 +48,6 @@ btn:focus {
     font-weight: 300;
     font-size: .8em;
     text-align: center;
-    color: #fff;
 }
 
 /* card alignment */
@@ -63,7 +62,9 @@ a.custom-card:hover {
     color: inherit;
 }
 
-.card {}
+.card {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
 
 /* margin and padding */
 
