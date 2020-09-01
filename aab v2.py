@@ -1,9 +1,12 @@
 import requests
 import time 
 import numpy as np
+from datetime import datetime
+import os
+import json
 
-list_cap = 51 # how many top coins to include
-time_list = ['24h', '7d', '30d']
+list_cap = 11 # how many top coins to include
+time_list = ['24h', '7d', '30d', '200d', '1y']
 
 time_frame = ','.join(time_list) # join time_list to one str w/ commas
 end_point = 'https://api.coingecko.com/api/v3/'
@@ -15,6 +18,7 @@ change_perc_key = 'price_change_percentage_{}_in_currency'
 bitcoin_change = {}
 alt_change = {}
 alt_summary = {}
+data_dict = {}
 
 
 # declare time_frame lists
@@ -32,7 +36,6 @@ api_data = api_response.json()
 
 
 # check if they are not NoneType
-
 for i in api_data:
 	if i['id'] == 'bitcoin':
 		for time in time_list:
@@ -43,23 +46,46 @@ for i in api_data:
 				alt_change[time].append(i[change_perc_key.format(time)])
  
 # sort lists (might not be needed)
-
 for key in alt_change:
 	alt_change[key].sort()
 
 # get mean and median
-
 for key in alt_change:
 	alt_summary[key + '_mean']= np.mean(alt_change[key])
 	alt_summary[key + '_median']= np.median(alt_change[key])
 
+# round the numbers
 for key in bitcoin_change:
 	bitcoin_change[key] = round((bitcoin_change[key]), 2)
 
 for key in alt_summary:
 	alt_summary[key] = round((alt_summary[key]), 2)
 
-print (('24 hour change: BTC: {} %, ALT_MEAN: {} %, ALT_MEDIAN: {} %').format(bitcoin_change['24h'], alt_summary['24h_mean'], alt_summary['24h_median']))
-print (('07 day change: BTC: {} %, ALT_MEAN: {} %, ALT_MEDIAN: {} %').format(bitcoin_change['7d'], alt_summary['7d_mean'], alt_summary['7d_median']))
-print (('30 day change: BTC: {} %, ALT_MEAN: {} %, ALT_MEDIAN: {} %').format(bitcoin_change['30d'], alt_summary['30d_mean'], alt_summary['30d_median']))
+# Print Summary
+# for i in time_list:
+# 	print (('{} change: BTC: {} %, ALT_MEAN: {} %, ALT_MEDIAN: {} %').format(i, bitcoin_change[i], alt_summary[i + '_mean'], alt_summary[i + '_median']))
 
+for i in time_list:
+	data_dict[i] = {}
+	data_dict[i]['btc'] = bitcoin_change[i]
+	data_dict[i]['alt_mean'] = alt_summary[i + '_mean']
+	data_dict[i]['alt_median'] = alt_summary[i + '_median']
+
+# print("Current Time =", current_time)
+now = datetime.now()
+current_time = now.strftime("%H:%M:%S")
+
+data_dict['time'] = current_time
+
+filename = 'priceData.json'
+with open(filename, 'r') as f:
+    data = json.load(f)
+    
+
+    # overwrite existing obj in json
+    data = data_dict
+
+os.remove(filename)
+with open(filename, 'w') as f:
+    # sort key = true to remain the key order
+    json.dump(data, f, indent=4, sort_keys=False)
