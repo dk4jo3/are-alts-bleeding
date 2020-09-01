@@ -47,7 +47,7 @@ async function getData() {
     }).join('');
     const cardRow = document.querySelector('.card-row');
     const timeRow = document.querySelector('.donate-row .time');
-    timeRow.textContent = `Last update: ${dataObj['time']['currentTime']}`
+    timeRow.textContent = `Last update: ${dataObj['time']}`
     console.log(cards);
     cardRow.innerHTML = cards;
 
