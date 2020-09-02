@@ -1,81 +1,91 @@
 import requests
 import time 
-import schedule
-import datetime
+import numpy as np
+from datetime import datetime
+import os
 import json
-import statistics
 
-def get_data(url, dir, dir2):
-    api_response = requests.get(url)
-    if api_response.status_code != 200:
-        api_price = 'error'
-    else:
-        api_data = api_response.json()
-        if dir2 != 0:
-            api_price = api_data[dir][dir2]
-        else:
-            api_price = api_data[dir]
-        api_price = float(api_price)
-        api_price = round(api_price, 2)
-        return api_price
+list_cap = 51 # how many top coins to include
+time_list = ['1h', '24h', '7d', '30d', '200d', '1y']
 
-# retrieve and organize api data
+time_frame = ','.join(time_list) # join time_list to one str w/ commas
+end_point = 'https://api.coingecko.com/api/v3/'
+change_perc_key = 'price_change_percentage_{}_in_currency'
 
-api_response = requests.get("https://api.coinmarketcap.com/v1/ticker/?limit=51")
+
+# declare two dicts for alts and bitcoinss
+
+bitcoin_change = {}
+alt_change = {}
+alt_summary = {}
+data_dict = {}
+
+
+# declare time_frame lists
+
+for i in time_list:
+	bitcoin_change[i] = []
+	alt_change[i] = []
+
+markets_end_point = end_point + \
+('coins/markets?vs_currency=USD&order=market_cap_desc&per_page={}&page=1&sparkline=false&price_change_percentage={}')\
+.format(list_cap, time_frame)
+
+api_response = requests.get(markets_end_point)
 api_data = api_response.json()
 
-#organized data 
-api_dumped_data = json.dumps(api_data[0], indent=4)
 
-# get bitcoin price change and conver to float
-btc_1h_change = float(api_data[0]['percent_change_1h'])
-btc_24h_change = float(api_data[0]['percent_change_24h'])
-btc_7d_change = float(api_data[0]['percent_change_7d'])
+# check if they are not NoneType
+for i in api_data:
+	if i['id'] == 'bitcoin':
+		for time in time_list:
+			bitcoin_change[time] = float(i[change_perc_key.format(time)])
+	else: 
+		for time in time_list: 
+			if i[change_perc_key.format(time)] is not None: 
+				alt_change[time].append(i[change_perc_key.format(time)])
+ 
+# sort lists (might not be needed)
+for key in alt_change:
+	alt_change[key].sort()
 
-# store all changes in lists 
-alt_1h_change = []
-alt_24h_change = []
-alt_7d_change = []
+# get mean and median
+for key in alt_change:
+	alt_summary[key + '_mean']= np.mean(alt_change[key])
+	alt_summary[key + '_median']= np.median(alt_change[key])
 
-# function that takes key and append all to the list also convert them to float
-def alt_change_list(time, list_name):
-	for i in range(1, 51):
-		list_name.append(float(api_data[i][time]))
-	return list_name
+# round the numbers
+for key in bitcoin_change:
+	bitcoin_change[key] = round((bitcoin_change[key]), 2)
 
+for key in alt_summary:
+	alt_summary[key] = round((alt_summary[key]), 2)
 
-alt_change_list('percent_change_1h' ,alt_1h_change)
-alt_change_list('percent_change_24h' ,alt_24h_change)
-alt_change_list('percent_change_7d' ,alt_7d_change)
+# Print Summary
+# for i in time_list:
+# 	print (('{} change: BTC: {} %, ALT_MEAN: {} %, ALT_MEDIAN: {} %').format(i, bitcoin_change[i], alt_summary[i + '_mean'], alt_summary[i + '_median']))
 
-#get vs BTC %change of alts and round them to 2 decimals
-def alt_btc_change_list(list_name, btc_time_change):
-	for i in range(len(list_name)):
-		list_name[i] = round(list_name[i] - btc_time_change, 2)
-	return list_name
+for i in time_list:
+	data_dict[i] = {}
+	data_dict[i]['btc'] = bitcoin_change[i]
+	data_dict[i]['alt_mean'] = alt_summary[i + '_mean']
+	data_dict[i]['alt_median'] = alt_summary[i + '_median']
 
-alt_btc_change_list(alt_1h_change, btc_1h_change)
-alt_btc_change_list(alt_24h_change, btc_24h_change)
-alt_btc_change_list(alt_7d_change, btc_7d_change)
+# print("Current Time =", current_time)
+now = datetime.now()
+current_time = now.strftime("%H:%M:%S")
 
+data_dict['time'] = current_time
 
-#get mean of each list, round to 3 decimal points.
-alt_1h_change_mean = round(statistics.mean(alt_1h_change), 3)
-alt_24h_change_mean = round(statistics.mean(alt_24h_change), 3)
-alt_7d_change_mean = round(statistics.mean(alt_7d_change), 3)
+filename = 'priceData.json'
+with open(filename, 'r') as f:
+    data = json.load(f)
+    
 
+    # overwrite existing obj in json
+    data = data_dict
 
-# print results
-print ("1H Average:" + str(alt_1h_change_mean) + "%")
-print ("1D Average:" + str(alt_24h_change_mean) + "%")
-print ("1W Average:" + str(alt_7d_change_mean) + "%")
-
-def result_indication(n):
-    if n > 0: 
-        print ("not really")
-    if n < 0 and n > -5: 
-        print ("A little bit")
-    if n < -3:
-        print ("SELL SELL SELL")
-
-result_indication(alt_24h_change_mean)
+os.remove(filename)
+with open(filename, 'w') as f:
+    # sort key = true to remain the key order
+    json.dump(data, f, indent=4, sort_keys=False)
