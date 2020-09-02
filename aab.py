@@ -73,7 +73,7 @@ for i in time_list:
 
 # print("Current Time =", current_time)
 now = datetime.now()
-current_time = now.strftime("%H:%M:%S")
+current_time = now.strftime("%b %d %Y %H:%M:%S")
 
 data_dict['time'] = current_time
 
