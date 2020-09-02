@@ -6,7 +6,7 @@ import os
 import json
 
 list_cap = 51 # how many top coins to include
-time_list = ['24h', '7d', '30d', '200d', '1y']
+time_list = ['1h', '24h', '7d', '30d', '200d', '1y']
 
 time_frame = ','.join(time_list) # join time_list to one str w/ commas
 end_point = 'https://api.coingecko.com/api/v3/'
