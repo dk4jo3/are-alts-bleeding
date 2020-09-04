@@ -69,8 +69,8 @@ round_nums(alt_summary, 2)
 
 
 # Print Summary
-for i in time_list:
-	print (('{} change: BTC: {} %, ALT_MEAN: {} %, ALT_MEDIAN: {} %').format(i, bitcoin_change[i], alt_summary[i + '_mean'], alt_summary[i + '_median']))
+# for i in time_list:
+#	print (('{} change: BTC: {} %, ALT_MEAN: {} %, ALT_MEDIAN: {} %').format(i, bitcoin_change[i], alt_summary[i + '_mean'], alt_summary[i + '_median']))
 
 # add to the output dicts
 for i in time_list:
@@ -82,8 +82,7 @@ for i in time_list:
 # print("Current Time =", current_time)
 now = datetime.now()
 current_time = now.strftime("%b %d %Y %H:%M:%S")
-
-
+data_dict['time'] = current_time
 
 filename = 'priceData.json'
 with open(filename, 'r') as f:
