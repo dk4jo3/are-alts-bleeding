@@ -7,22 +7,29 @@ import json
 
 list_cap = 51 # how many top coins to include
 time_list = ['1h', '24h', '7d', '30d', '200d', '1y']
+m = 3 #remove outlier if data is more than m times of std away from mean
 
 time_frame = ','.join(time_list) # join time_list to one str w/ commas
 end_point = 'https://api.coingecko.com/api/v3/'
 change_perc_key = 'price_change_percentage_{}_in_currency'
 
 
-# declare two dicts for alts and bitcoinss
-
+# declare empty dicts
 bitcoin_change = {}
 alt_change = {}
 alt_summary = {}
 data_dict = {}
 
+# remove outliers
+def reject_outliers(data, m):
+    return data[abs(data - np.mean(data)) < m * np.std(data)]
+
+# round the numbers
+def round_nums(list, point):
+	for key in list:
+		list[key] = round((list[key]), point)
 
 # declare time_frame lists
-
 for i in time_list:
 	bitcoin_change[i] = []
 	alt_change[i] = []
@@ -35,7 +42,7 @@ api_response = requests.get(markets_end_point)
 api_data = api_response.json()
 
 
-# check if they are not NoneType
+# check if they are NoneType, usually happen for newer coins
 for i in api_data:
 	if i['id'] == 'bitcoin':
 		for time in time_list:
@@ -44,10 +51,12 @@ for i in api_data:
 		for time in time_list: 
 			if i[change_perc_key.format(time)] is not None: 
 				alt_change[time].append(i[change_perc_key.format(time)])
- 
-# sort lists (might not be needed)
+
+
+# sort lists and remove outliers
 for key in alt_change:
 	alt_change[key].sort()
+	alt_change[key] = reject_outliers(np.asarray(alt_change[key]), m)
 
 # get mean and median
 for key in alt_change:
@@ -55,16 +64,15 @@ for key in alt_change:
 	alt_summary[key + '_median']= np.median(alt_change[key])
 
 # round the numbers
-for key in bitcoin_change:
-	bitcoin_change[key] = round((bitcoin_change[key]), 2)
+round_nums(bitcoin_change, 2)
+round_nums(alt_summary, 2)
 
-for key in alt_summary:
-	alt_summary[key] = round((alt_summary[key]), 2)
 
 # Print Summary
-# for i in time_list:
-# 	print (('{} change: BTC: {} %, ALT_MEAN: {} %, ALT_MEDIAN: {} %').format(i, bitcoin_change[i], alt_summary[i + '_mean'], alt_summary[i + '_median']))
+for i in time_list:
+	print (('{} change: BTC: {} %, ALT_MEAN: {} %, ALT_MEDIAN: {} %').format(i, bitcoin_change[i], alt_summary[i + '_mean'], alt_summary[i + '_median']))
 
+# add to the output dicts
 for i in time_list:
 	data_dict[i] = {}
 	data_dict[i]['btc'] = bitcoin_change[i]
@@ -75,7 +83,7 @@ for i in time_list:
 now = datetime.now()
 current_time = now.strftime("%b %d %Y %H:%M:%S")
 
-data_dict['time'] = current_time
+
 
 filename = 'priceData.json'
 with open(filename, 'r') as f:
