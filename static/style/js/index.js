@@ -14,10 +14,9 @@ async function getData() {
 
     let objKeys = [];
     
-    // -1 since the last object is time
-    for (i = 0; i < getKeys(dataObj).length - 1; i++) {
-        objKeys.push(getKeys(dataObj)[i]);
-    }
+    // pop the last one since the last one is time
+    let objKeys = Object.keys(dataObj);
+    objKeys.pop();
     console.log(objKeys)
 
     // .map the keys to get html content and generate html content
