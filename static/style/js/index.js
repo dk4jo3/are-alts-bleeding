@@ -2,8 +2,6 @@
 async function getData() {
     const results = await fetch('priceData.json');
     const dataObj = await results.json();
-    console.log(dataObj);
-
 
     // shorten Object.keys function
     function getKeys(n) {
@@ -47,7 +45,6 @@ async function getData() {
     const cardRow = document.querySelector('.card-row');
     const timeRow = document.querySelector('.donate-row .time');
     timeRow.textContent = `Last update: ${dataObj['time']}`
-    console.log(cards);
     cardRow.innerHTML = cards;
 
 }
