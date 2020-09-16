@@ -8,10 +8,7 @@ async function getData() {
         return Object.keys(n);
     }
 
-    // get keys and push into a new array
-
-    let objKeys = [];
-    
+    // get keys and into a new array
     // pop the last one since the last one is time
     let objKeys = Object.keys(dataObj);
     objKeys.pop();
