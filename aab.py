@@ -44,6 +44,7 @@ def export_JSON(directory, dict_name):
 	    json.dump(data, f, indent=4, sort_keys=True)
 
 # declare time_frame lists
+
 for i in time_list:
 	bitcoin_change[i] = []
 	alt_change[i] = []
@@ -56,15 +57,14 @@ api_response = requests.get(markets_end_point)
 api_data = api_response.json()
 
 
-# check if they are NoneType, usually happen for newer coins
 for i in api_data:
 	if i['id'] == 'bitcoin':
 		for time in time_list:
 			bitcoin_change[time] = float(i[change_perc_key.format(time)])
 	else: 
 		for time in time_list: 
-			if i[change_perc_key.format(time)] is not None: 
-				alt_change[time].append(i[change_perc_key.format(time)])
+			if i[change_perc_key.format(time)] is not None: # New coins sometimes do not have data for longer time frame
+				alt_change[time].append(i[change_perc_key.format(time)]) # append all alt data into one list
 
 
 # sort lists and remove outliers
@@ -88,10 +88,10 @@ round_nums(alt_summary, 2)
 
 # add to the output dicts
 for i in time_list:
-	data_dict[i] = {}
-	data_dict[i]['btc'] = bitcoin_change[i]
-	data_dict[i]['alt_mean'] = alt_summary[i + '_mean']
-	data_dict[i]['alt_median'] = alt_summary[i + '_median']
+	data_dict[i.upper()] = {}
+	data_dict[i.upper()]['btc'] = bitcoin_change[i]
+	data_dict[i.upper()]['alt_mean'] = alt_summary[i + '_mean'] #no i.upper() since it's calling the 1h_mean from alt_summary
+	data_dict[i.upper()]['alt_median'] = alt_summary[i + '_median']
 
 # print("Current Time =", current_time)
 now = datetime.now()
