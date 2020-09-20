@@ -41,7 +41,7 @@ def export_JSON(directory, dict_name):
 	os.remove(filename)
 	with open(filename, 'w') as f:
 	    # sort key = true to remain the key order
-	    json.dump(data, f, indent=4, sort_keys=True)
+	    json.dump(data, f, indent=4, sort_keys=False)
 
 # declare time_frame lists
 
