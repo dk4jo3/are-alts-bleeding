@@ -7,7 +7,7 @@ import json
 
 list_cap = 51 # how many top coins to include
 time_list = ['1h', '24h', '7d', '30d', '200d', '1y']
-m = 3 #remove outlier if data is more than m times of std away from mean
+m = 5 #remove outlier if data is more than m times of std away from mean
 
 time_frame = ','.join(time_list) # join time_list to one str w/ commas
 end_point = 'https://api.coingecko.com/api/v3/'
@@ -28,6 +28,20 @@ def reject_outliers(data, m):
 def round_nums(list, point):
 	for key in list:
 		list[key] = round((list[key]), point)
+
+def export_JSON(directory, dict_name):
+	filename = directory
+	with open(filename, 'r') as f:
+	    data = json.load(f)
+
+	    # overwrite existing obj in json
+	    print (data)
+	    data = dict_name
+
+	os.remove(filename)
+	with open(filename, 'w') as f:
+	    # sort key = true to remain the key order
+	    json.dump(data, f, indent=4, sort_keys=True)
 
 # declare time_frame lists
 for i in time_list:
@@ -84,15 +98,4 @@ now = datetime.now()
 current_time = now.strftime("%b %d %Y %H:%M:%S")
 data_dict['time'] = current_time
 
-filename = 'priceData.json'
-with open(filename, 'r') as f:
-    data = json.load(f)
-    
-
-    # overwrite existing obj in json
-    data = data_dict
-
-os.remove(filename)
-with open(filename, 'w') as f:
-    # sort key = true to remain the key order
-    json.dump(data, f, indent=4, sort_keys=False)
+export_JSON('priceData.json', data_dict)
