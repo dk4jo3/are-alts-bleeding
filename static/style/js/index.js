@@ -16,7 +16,7 @@ async function getData() {
 
     // .map the keys to get html content and generate html content
     const cards = objKeys.map(key => {
-        return `<div class="col-md-4">
+        return `
                 <div class="card">
                     <div class="card-body">
                         <h2 class="card-title">${key}</h2>
@@ -34,7 +34,6 @@ async function getData() {
                                 <p class="card-label">Alts Median</p>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>`
