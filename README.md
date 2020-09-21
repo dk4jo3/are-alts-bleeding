@@ -1,6 +1,6 @@
 # are-alts-bleeding
-Compare bitcoin and altcoin movement.
+Compare bitcoin and altcoin movement to see if altcoins are losing their BTC value.
 
-note: data points outside of 3 standard deviations are removed. 
+note: alt coin price change data points outside of 3 standard deviations are removed. 
 
-view the website at https://dk4jo3.github.io/are-alts-bleeding/
+Visit the website at https://dk4jo3.github.io/are-alts-bleeding/
