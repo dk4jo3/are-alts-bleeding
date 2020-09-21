@@ -80,7 +80,6 @@ a.custom-card:hover {
 
 .card {
     margin: 12px;
-    border-radius: 0;
     align-content: center;
     flex: 1 1 300px;
     border-radius: 8px;
