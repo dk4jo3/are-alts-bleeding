@@ -82,7 +82,7 @@ a.custom-card:hover {
     margin: 12px;
     border-radius: 0;
     align-content: center;
-    flex: 1 1 auto;
+    flex: 1 1 300px;
     border-radius: 8px;
     border-style: none;
 }
