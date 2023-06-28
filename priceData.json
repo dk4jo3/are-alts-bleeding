@@ -1,33 +1,33 @@
 {
     "1H": {
-        "btc": 0.7,
-        "alt_mean": 0.68,
-        "alt_median": 0.66
+        "btc": 0.04,
+        "alt_mean": -0.05,
+        "alt_median": -0.09
     },
     "24H": {
-        "btc": -1.0,
-        "alt_mean": -1.67,
-        "alt_median": -1.41
+        "btc": -0.41,
+        "alt_mean": -1.09,
+        "alt_median": -0.83
     },
     "7D": {
-        "btc": 3.43,
-        "alt_mean": 2.67,
-        "alt_median": 0.68
+        "btc": 1.87,
+        "alt_mean": 2.22,
+        "alt_median": 0.08
     },
     "30D": {
-        "btc": 9.36,
-        "alt_mean": -8.09,
-        "alt_median": -7.35
+        "btc": 10.26,
+        "alt_mean": -7.62,
+        "alt_median": -6.71
     },
     "200D": {
-        "btc": 77.17,
-        "alt_mean": 11.06,
-        "alt_median": 0.06
+        "btc": 76.68,
+        "alt_mean": 10.73,
+        "alt_median": -0.15
     },
     "1Y": {
-        "btc": 46.03,
-        "alt_mean": 12.63,
-        "alt_median": -0.06
+        "btc": 47.49,
+        "alt_mean": 14.56,
+        "alt_median": 0.0
     },
-    "time": "Jun 28 2023 15:08:12"
+    "time": "Jun 28 2023 16:09:55"
 }
